@@ -392,3 +392,33 @@ JOIN stops stopa ON (a.stop = stopa.id)
 JOIN stops stopb ON (b.stop = stopb.id)
 WHERE stopa.name = 'Craiglockhart'
 -- 10
+SELECT
+  bus_1.bus_num AS 'num',
+  bus_1.company,
+  bus_2.transfer AS 'name',
+  bus_2.bus_num AS 'num',
+  bus_2.company
+FROM (
+  SELECT route_1.num AS 'bus_num',
+  route_1.company AS 'company',
+  route_2.stop AS 'bus_stop'
+  FROM route route_1
+  JOIN route route_2 ON (route_1.num = route_2.num AND route_1.company = route_2.company)
+  JOIN stops s1 ON s1.id = route_1.stop
+  JOIN stops s2 ON s2.id = route_2.stop
+  WHERE s1.name = 'Craiglockhart'
+  ) bus_1
+  JOIN
+  (
+  SELECT s1.name AS 'transfer',
+  route_1.num AS 'bus_num',
+  route_1.company AS 'company',
+  route_1.stop AS 'bus_stop',
+  route_1.pos AS 'pos'
+  FROM route route_1 JOIN route route_2 ON (route_1.num = route_2.num AND route_1.company = route_2.company)
+  JOIN stops s1 ON s1.id = route_1.stop
+  JOIN stops s2 ON s2.id = route_2.stop
+  WHERE s2.name = 'Lochend'
+  ) bus_2
+  ON bus_1.bus_stop = bus_2.bus_stop
+ORDER BY bus_1.bus_num, name, 4;
